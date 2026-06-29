@@ -1,13 +1,16 @@
 package com.barapp.backend.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.barapp.backend.dto.request.CategoryRequest;
 import com.barapp.backend.dto.response.CategoryResponse;
 import com.barapp.backend.entity.Category;
 import com.barapp.backend.repository.CategoryRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 // Service qui gère toute la logique métier des catégories
 @Service
