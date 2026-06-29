@@ -11,23 +11,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-// Service principal qui gère les commandes côté client et côté barmaker
+// Service principal qui gère les commandes côté client (QR code) et côté barmaker
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final UserRepository userRepository;
     private final CocktailRepository cocktailRepository;
     private final CocktailSizeRepository cocktailSizeRepository;
 
-    // Création d'une nouvelle commande : je récupère le client, les cocktails et je calcule le total
-    public OrderResponse create(Long clientId, OrderRequest request) {
-        User client = userRepository.findById(clientId)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
-
-        Order order = Order.builder().client(client).build();
+    // Création d'une nouvelle commande depuis le numéro de table scanné via QR code
+    public OrderResponse create(OrderRequest request) {
+        Order order = Order.builder().tableNumber(request.getTableNumber()).build();
 
         // Pour chaque item du panier, je sauvegarde le prix unitaire au moment de la commande
         request.getItems().forEach(i -> {
@@ -52,9 +48,9 @@ public class OrderService {
         return toResponse(orderRepository.save(order));
     }
 
-    // Récupère les commandes d'un client pour qu'il puisse suivre leur avancement
-    public List<OrderResponse> getClientOrders(Long clientId) {
-        return orderRepository.findByClientId(clientId).stream().map(this::toResponse).toList();
+    // Récupère les commandes d'une table pour que le client puisse suivre leur avancement
+    public List<OrderResponse> getOrdersByTable(Integer tableNumber) {
+        return orderRepository.findByTableNumber(tableNumber).stream().map(this::toResponse).toList();
     }
 
     // Récupère toutes les commandes non terminées pour le barmaker
@@ -99,7 +95,7 @@ public class OrderService {
     // Conversion de l'entité Order en DTO pour la réponse API
     private OrderResponse toResponse(Order o) {
         List<OrderItemResponse> items = o.getItems().stream().map(this::toItemResponse).toList();
-        return new OrderResponse(o.getId(), o.getStatus(), o.getTotalPrice(), o.getCreatedAt(), items);
+        return new OrderResponse(o.getId(), o.getTableNumber(), o.getStatus(), o.getTotalPrice(), o.getCreatedAt(), items);
     }
 
     // Conversion d'un item de commande en DTO

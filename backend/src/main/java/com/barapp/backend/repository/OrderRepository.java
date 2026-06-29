@@ -8,6 +8,6 @@ import com.barapp.backend.entity.Order;
 import com.barapp.backend.enums.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByClientId(Long clientId);
+    List<Order> findByTableNumber(Integer tableNumber);
     List<Order> findByStatusNot(OrderStatus status);
 }

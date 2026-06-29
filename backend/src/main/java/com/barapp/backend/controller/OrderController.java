@@ -29,16 +29,16 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // Le client crée une commande depuis son panier
-    @PostMapping("/client/{clientId}")
-    public ResponseEntity<OrderResponse> create(@PathVariable Long clientId, @Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.create(clientId, request));
+    // Le client commande depuis son panier, le numéro de table vient du QR code
+    @PostMapping
+    public ResponseEntity<OrderResponse> create(@Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.ok(orderService.create(request));
     }
 
-    // Le client consulte ses commandes pour suivre leur avancement
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<OrderResponse>> getClientOrders(@PathVariable Long clientId) {
-        return ResponseEntity.ok(orderService.getClientOrders(clientId));
+    // Le client suit ses commandes via le numéro de table scanné
+    @GetMapping("/table/{tableNumber}")
+    public ResponseEntity<List<OrderResponse>> getOrdersByTable(@PathVariable Integer tableNumber) {
+        return ResponseEntity.ok(orderService.getOrdersByTable(tableNumber));
     }
 
     // Le barmaker voit toutes les commandes non terminées à traiter
