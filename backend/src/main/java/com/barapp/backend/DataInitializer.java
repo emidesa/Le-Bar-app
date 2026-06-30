@@ -1,18 +1,26 @@
 package com.barapp.backend;
 
-import com.barapp.backend.dto.external.CocktailDbResponse;
-import com.barapp.backend.dto.external.DrinkDto;
-import com.barapp.backend.entity.*;
-import com.barapp.backend.enums.CocktailSizeEnum;
-import com.barapp.backend.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.barapp.backend.dto.external.CocktailDbResponse;
+import com.barapp.backend.dto.external.DrinkDto;
+import com.barapp.backend.entity.Category;
+import com.barapp.backend.entity.Cocktail;
+import com.barapp.backend.entity.CocktailIngredient;
+import com.barapp.backend.entity.CocktailSize;
+import com.barapp.backend.entity.Ingredient;
+import com.barapp.backend.enums.CocktailSizeEnum;
+import com.barapp.backend.repository.CategoryRepository;
+import com.barapp.backend.repository.CocktailRepository;
+import com.barapp.backend.repository.IngredientRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 // S'exécute une seule fois au démarrage pour peupler la BDD depuis TheCocktailDB
 @Slf4j
@@ -87,6 +95,7 @@ public class DataInitializer implements CommandLineRunner {
                         Ingredient.builder().name(name).build()));
             cocktail.getIngredients().add(CocktailIngredient.builder()
                     .cocktail(cocktail)
+                    .quantity(BigDecimal.ONE)
                     .ingredient(ingredient)
                     .unit(i < measures.size() ? measures.get(i) : "")
                     .build());

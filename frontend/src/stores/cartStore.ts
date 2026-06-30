@@ -28,9 +28,9 @@ export const useCartStore = defineStore('cart', () => {
       i => i.cocktailId === item.cocktailId && i.sizeId === item.sizeId
     )
     if (existing) {
-      existing.quantity++
+      existing.quantity += item.quantity
     } else {
-      items.value.push({ ...item, quantity: 1 })
+      items.value.push({ ...item })
     }
   }
 
@@ -40,9 +40,15 @@ export const useCartStore = defineStore('cart', () => {
     )
   }
 
+  function updateQuantity(cocktailId: number, sizeId: number, qty: number) {
+    if (qty <= 0) { removeItem(cocktailId, sizeId); return }
+    const item = items.value.find(i => i.cocktailId === cocktailId && i.sizeId === sizeId)
+    if (item) item.quantity = qty
+  }
+
   function clearCart() {
     items.value = []
   }
 
-  return { items, total, itemCount, addItem, removeItem, clearCart }
+  return { items, total, itemCount, addItem, removeItem, updateQuantity, clearCart }
 })

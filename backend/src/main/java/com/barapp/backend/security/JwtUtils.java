@@ -4,22 +4,28 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
 
 // Utilitaire pour générer et valider les tokens JWT
 @Component
 public class JwtUtils {
 
-    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long EXPIRATION = 86400000; // 24h en millisecondes
+    // Clé fixe chargée depuis application.properties — ne change pas au redémarrage
+    private final SecretKey key;
+    private final long EXPIRATION = 86400000; // 24h
 
-    // Génère un token JWT avec l'email et le rôle de l'utilisateur
+    public JwtUtils(@Value("${app.jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String generateToken(String email, String role) {
         return Jwts.builder()
                 .subject(email)
@@ -30,12 +36,10 @@ public class JwtUtils {
                 .compact();
     }
 
-    // Extrait l'email depuis le token
     public String getEmail(String token) {
         return getClaims(token).getSubject();
     }
 
-    // Vérifie que le token est valide et non expiré
     public boolean isValid(String token) {
         try {
             getClaims(token);

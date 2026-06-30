@@ -36,9 +36,17 @@ public class SecurityConfig {
                 // Les clients commandent et suivent leurs commandes sans compte
                 .requestMatchers("/api/orders").permitAll()
                 .requestMatchers("/api/orders/table/**").permitAll()
-                // Seul le barmaker connecté peut voir toutes les commandes et faire avancer les statuts
+                // Lecture d'une commande en détail (barmaker, mais aussi accessible sans compte)
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/**").permitAll()
+                // Avancement des items par le barmaker — ID connu uniquement côté barmaker
+                .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/orders/items/**").permitAll()
+                // Seul le barmaker connecté peut accéder aux autres routes
                 .anyRequest().authenticated()
             )
+            // Retourne 401 (et non 403) pour les requêtes sans token valide
+            .exceptionHandling(e -> e.authenticationEntryPoint(
+                (req, res, ex) -> res.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Non authentifié")
+            ))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

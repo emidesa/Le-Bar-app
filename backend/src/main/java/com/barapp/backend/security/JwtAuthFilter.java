@@ -28,15 +28,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        // Je vérifie que le header Authorization contient bien un token Bearer
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (jwtUtils.isValid(token)) {
-                String email = jwtUtils.getEmail(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            try {
+                if (jwtUtils.isValid(token)) {
+                    String email = jwtUtils.getEmail(token);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            } catch (Exception ignored) {
+                // Token invalide ou utilisateur introuvable — on laisse passer sans authentification
             }
         }
 

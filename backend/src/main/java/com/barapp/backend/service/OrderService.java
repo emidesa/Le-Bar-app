@@ -9,10 +9,12 @@ import com.barapp.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 // Service principal qui gère les commandes côté client (QR code) et côté barmaker
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -44,7 +46,6 @@ public class OrderService {
             order.setTotalPrice(order.getTotalPrice().add(size.getPrice().multiply(java.math.BigDecimal.valueOf(i.getQuantity()))));
         });
 
-        order.setStatus(OrderStatus.EN_COURS);
         return toResponse(orderRepository.save(order));
     }
 
@@ -53,9 +54,9 @@ public class OrderService {
         return orderRepository.findByTableNumber(tableNumber).stream().map(this::toResponse).toList();
     }
 
-    // Récupère toutes les commandes non terminées pour le barmaker
+    // Récupère toutes les commandes pour le barmaker (y compris les terminées)
     public List<OrderResponse> getPendingOrders() {
-        return orderRepository.findByStatusNot(OrderStatus.TERMINEE).stream().map(this::toResponse).toList();
+        return orderRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     // Détail d'une commande spécifique
@@ -81,10 +82,16 @@ public class OrderService {
         item.setStatus(next);
         orderItemRepository.save(item);
 
+        // Dès que le barmaker touche un item, la commande passe EN_COURS
+        Order order = item.getOrder();
+        if (order.getStatus() == OrderStatus.COMMANDEE) {
+            order.setStatus(OrderStatus.EN_COURS);
+            orderRepository.save(order);
+        }
+
         // Je vérifie si tous les items de la commande sont terminés pour clore la commande
-        boolean allDone = !orderItemRepository.existsByOrderIdAndStatusNot(item.getOrder().getId(), ItemStatus.TERMINEE);
+        boolean allDone = !orderItemRepository.existsByOrderIdAndStatusNot(order.getId(), ItemStatus.TERMINEE);
         if (allDone) {
-            Order order = item.getOrder();
             order.setStatus(OrderStatus.TERMINEE);
             orderRepository.save(order);
         }

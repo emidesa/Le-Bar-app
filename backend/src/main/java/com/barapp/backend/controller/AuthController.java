@@ -50,7 +50,7 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("Email ou mot de passe incorrect"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(null);
         }
 
         String token = jwtUtils.generateToken(user.getEmail(), user.getRole().name());

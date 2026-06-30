@@ -37,7 +37,7 @@ public class CocktailIngredient {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    @Column(nullable = false, precision = 8, scale = 2)
+    @Column(precision = 8, scale = 2)
     private BigDecimal quantity;
 
     @Column(nullable = false,length = 20)

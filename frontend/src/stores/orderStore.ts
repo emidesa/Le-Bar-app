@@ -5,6 +5,7 @@ import { useCartStore } from './cartStore'
 
 export const useOrderStore = defineStore('order', () => {
   const orders = ref<any[]>([])
+  const currentOrder = ref<any>(null)
   const cartStore = useCartStore()
 
   // Le client passe sa commande avec son numéro de table (venu du QR code)
@@ -33,11 +34,16 @@ export const useOrderStore = defineStore('order', () => {
     orders.value = response.data
   }
 
+  async function fetchOrderById(id: number) {
+    const response = await api.get(`/orders/${id}`)
+    currentOrder.value = response.data
+  }
+
   // Le barmaker fait avancer un cocktail à l'étape suivante
   async function advanceItem(itemId: number) {
     const response = await api.patch(`/orders/items/${itemId}/next-step`)
     return response.data
   }
 
-  return { orders, placeOrder, fetchOrdersByTable, fetchPendingOrders, advanceItem }
+  return { orders, currentOrder, placeOrder, fetchOrdersByTable, fetchPendingOrders, fetchOrderById, advanceItem }
 })

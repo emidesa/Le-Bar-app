@@ -1,0 +1,13 @@
+:root {
+  --bg-dark:    #1a1a2e;
+  --bg-card:    #16213e;
+  --bg-input:   #0f3460;
+  --color-gold:    #f5a623;
+  --color-danger:  #e74c3c;
+  --color-success: #27ae60;
+  --color-muted:   #aaa;
+  --color-border:  #333;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
