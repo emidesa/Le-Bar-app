@@ -23,7 +23,7 @@ services:
     build: ./backend
     container_name: barapp-backend
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/barapp
       SPRING_DATASOURCE_USERNAME: barapp
