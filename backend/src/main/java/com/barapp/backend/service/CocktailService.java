@@ -3,6 +3,7 @@ package com.barapp.backend.service;
 import com.barapp.backend.dto.request.CocktailRequest;
 import com.barapp.backend.dto.response.*;
 import com.barapp.backend.entity.*;
+import com.barapp.backend.mapper.CocktailMapper;
 import com.barapp.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +18,21 @@ public class CocktailService {
     private final CocktailRepository cocktailRepository;
     private final CategoryRepository categoryRepository;
     private final IngredientRepository ingredientRepository;
+    private final CocktailMapper cocktailMapper;
 
     // Retourne tous les cocktails de la carte avec leurs tailles et ingrédients
     public List<CocktailResponse> getAll() {
-        return cocktailRepository.findAll().stream().map(this::toResponse).toList();
+        return cocktailRepository.findAll().stream().map(cocktailMapper::toResponse).toList();
     }
 
     // Filtre les cocktails par catégorie, pratique pour le menu client
     public List<CocktailResponse> getByCategory(Long categoryId) {
-        return cocktailRepository.findByCategoryId(categoryId).stream().map(this::toResponse).toList();
+        return cocktailRepository.findByCategoryId(categoryId).stream().map(cocktailMapper::toResponse).toList();
     }
 
     // Récupère un cocktail précis par son id
     public CocktailResponse getById(Long id) {
-        return toResponse(cocktailRepository.findById(id)
+        return cocktailMapper.toResponse(cocktailRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cocktail non trouvé")));
     }
 
@@ -74,7 +76,7 @@ public class CocktailService {
             });
         }
 
-        return toResponse(cocktailRepository.save(cocktail));
+        return cocktailMapper.toResponse(cocktailRepository.save(cocktail));
     }
 
     // Suppression d'un cocktail, le cascade supprime automatiquement ses tailles et ingrédients
@@ -84,20 +86,4 @@ public class CocktailService {
         cocktailRepository.deleteById(id);
     }
 
-    // Conversion de l'entité en DTO pour ne pas exposer les données JPA directement
-    private CocktailResponse toResponse(Cocktail c) {
-        CategoryResponse cat = c.getCategory() != null
-                ? new CategoryResponse(c.getCategory().getId(), c.getCategory().getName(), c.getCategory().getDescription())
-                : null;
-
-        List<CocktailSizeResponse> sizes = c.getSizes().stream()
-                .map(s -> new CocktailSizeResponse(s.getId(), s.getSize(), s.getPrice()))
-                .toList();
-
-        List<CocktailIngredientResponse> ingredients = c.getIngredients().stream()
-                .map(i -> new CocktailIngredientResponse(i.getId(), i.getIngredient().getName(), i.getQuantity(), i.getUnit()))
-                .toList();
-
-        return new CocktailResponse(c.getId(), c.getName(), c.getDescription(), c.getImageUrl(), cat, sizes, ingredients);
-    }
 }

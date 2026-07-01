@@ -5,6 +5,7 @@ import com.barapp.backend.dto.response.*;
 import com.barapp.backend.entity.*;
 import com.barapp.backend.enums.ItemStatus;
 import com.barapp.backend.enums.OrderStatus;
+import com.barapp.backend.mapper.OrderMapper;
 import com.barapp.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CocktailRepository cocktailRepository;
     private final CocktailSizeRepository cocktailSizeRepository;
+    private final OrderMapper orderMapper;
 
     // Création d'une nouvelle commande depuis le numéro de table scanné via QR code
     public OrderResponse create(OrderRequest request) {
@@ -46,22 +48,22 @@ public class OrderService {
             order.setTotalPrice(order.getTotalPrice().add(size.getPrice().multiply(java.math.BigDecimal.valueOf(i.getQuantity()))));
         });
 
-        return toResponse(orderRepository.save(order));
+        return orderMapper.toResponse(orderRepository.save(order));
     }
 
     // Récupère les commandes d'une table pour que le client puisse suivre leur avancement
     public List<OrderResponse> getOrdersByTable(Integer tableNumber) {
-        return orderRepository.findByTableNumber(tableNumber).stream().map(this::toResponse).toList();
+        return orderRepository.findByTableNumber(tableNumber).stream().map(orderMapper::toResponse).toList();
     }
 
     // Récupère toutes les commandes pour le barmaker (y compris les terminées)
     public List<OrderResponse> getPendingOrders() {
-        return orderRepository.findAll().stream().map(this::toResponse).toList();
+        return orderRepository.findAll().stream().map(orderMapper::toResponse).toList();
     }
 
     // Détail d'une commande spécifique
     public OrderResponse getById(Long id) {
-        return toResponse(orderRepository.findById(id)
+        return orderMapper.toResponse(orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Commande non trouvée")));
     }
 
@@ -96,7 +98,7 @@ public class OrderService {
             orderRepository.saveAndFlush(order);
         }
 
-        return toItemResponse(item);
+        return orderMapper.toItemResponse(item);
     }
 
     // Suppression d'une commande terminée (côté client ou barmaker)
@@ -109,14 +111,4 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    // Conversion de l'entité Order en DTO pour la réponse API
-    private OrderResponse toResponse(Order o) {
-        List<OrderItemResponse> items = o.getItems().stream().map(this::toItemResponse).toList();
-        return new OrderResponse(o.getId(), o.getTableNumber(), o.getStatus(), o.getTotalPrice(), o.getCreatedAt(), items);
-    }
-
-    // Conversion d'un item de commande en DTO
-    private OrderItemResponse toItemResponse(OrderItem i) {
-        return new OrderItemResponse(i.getId(), i.getCocktail().getName(), i.getSize().getSize(), i.getQuantity(), i.getUnitPrice(), i.getStatus());
-    }
 }
