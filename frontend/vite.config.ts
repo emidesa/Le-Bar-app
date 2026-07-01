@@ -17,7 +17,8 @@ export default defineConfig({
   // En développement, redirige /api vers le backend Spring Boot
   server: {
     proxy: {
-      '/api': 'http://localhost:8081'
+      '/api': 'http://localhost:8081',
+      '/uploads': 'http://localhost:8081'
     }
   }
 })

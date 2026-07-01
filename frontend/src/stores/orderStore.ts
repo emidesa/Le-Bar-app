@@ -45,5 +45,11 @@ export const useOrderStore = defineStore('order', () => {
     return response.data
   }
 
-  return { orders, currentOrder, placeOrder, fetchOrdersByTable, fetchPendingOrders, fetchOrderById, advanceItem }
+  // Suppression d'une commande terminée (côté client ou barmaker)
+  async function deleteOrder(orderId: number) {
+    await api.delete(`/orders/${orderId}`)
+    orders.value = orders.value.filter(o => o.id !== orderId)
+  }
+
+  return { orders, currentOrder, placeOrder, fetchOrdersByTable, fetchPendingOrders, fetchOrderById, advanceItem, deleteOrder }
 })

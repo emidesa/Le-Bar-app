@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,5 +58,12 @@ public class OrderController {
     @PatchMapping("/items/{itemId}/next-step")
     public ResponseEntity<OrderItemResponse> advanceItemStatus(@PathVariable Long itemId) {
         return ResponseEntity.ok(orderService.advanceItemStatus(itemId));
+    }
+
+    // Suppression d'une commande terminée (par le client ou le barmaker)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        orderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
     }
 }

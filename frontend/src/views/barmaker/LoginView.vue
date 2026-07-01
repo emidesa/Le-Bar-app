@@ -5,7 +5,7 @@
     <div class="login-visual">
       <div class="visual-content">
         <div class="brand-icon">🍸</div>
-        <h1 class="brand-title">Bar'app</h1>
+        <h1 class="brand-title">Tsuki</h1>
         <p class="brand-sub">BAR À COCKTAILS</p>
         <p class="brand-desc">L'espace de travail de vos barmakers pour gérer les commandes en temps réel.</p>
       </div>

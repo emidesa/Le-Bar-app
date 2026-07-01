@@ -5,7 +5,7 @@
       <div class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Bar'app</p>
+          <p class="brand-name">Tsuki</p>
           <p class="brand-tag">BAR À COCKTAILS</p>
         </div>
       </div>
@@ -25,6 +25,12 @@
       <!-- On affiche la commande la plus récente en premier plan -->
       <template v-for="order in orderStore.orders" :key="order.id">
         <div class="order-block">
+
+          <button
+            v-if="order.status === 'TERMINEE'"
+            class="dismiss-btn"
+            @click="orderStore.deleteOrder(order.id)"
+          >✕</button>
 
           <!-- En-tête commande -->
           <p class="order-eyebrow">COMMANDE #{{ order.id }} · TABLE {{ tableNumber }}</p>
@@ -111,11 +117,11 @@ function statusLabel(s: string) {
 }
 function itemLabel(s: string) {
   const m: Record<string,string> = {
-    ATTENTE:                '⏸ Attente',
-    PREPARATION_INGREDIENTS:'🧪 Préparation',
-    ASSEMBLAGE:             '🔀 Assemblage',
-    DRESSAGE:               '🎨 Dressage',
-    TERMINEE:               '✅ Prêt'
+    ATTENTE:                'Attente',
+    PREPARATION_INGREDIENTS:'Préparation',
+    ASSEMBLAGE:             'Assemblage',
+    DRESSAGE:               'Dressage',
+    TERMINEE:               'Prêt'
   }
   return m[s] ?? s
 }
@@ -177,9 +183,17 @@ onUnmounted(() => {
 .tracking-main { padding: 2rem; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
 
 .order-block {
+  position: relative;
   background: white; border: 1px solid var(--c-border);
   border-radius: 14px; padding: 1.75rem;
 }
+.dismiss-btn {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 0.85rem; color: #ccc; line-height: 1;
+  padding: 0.2rem 0.4rem;
+}
+.dismiss-btn:hover { color: #999; }
 
 .order-eyebrow {
   font-family: sans-serif; font-size: 0.7rem; letter-spacing: 0.12em;

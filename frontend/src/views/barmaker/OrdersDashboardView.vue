@@ -6,7 +6,7 @@
       <div class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Bar'app</p>
+          <p class="brand-name">Tsuki</p>
           <span class="bm-badge">ESPACE BARMAKER</span>
         </div>
       </div>
@@ -46,22 +46,28 @@
           :key="order.id"
           class="order-card"
         >
+          <button
+            v-if="order.status === 'TERMINEE'"
+            class="dismiss-btn"
+            @click="orderStore.deleteOrder(order.id)"
+          >✕</button>
+
           <div class="card-top">
             <div>
               <p class="card-id">#T-{{ order.id }}</p>
               <p class="card-meta">Table {{ order.tableNumber }} · {{ order.items?.length }} cocktail{{ order.items?.length > 1 ? 's' : '' }}</p>
             </div>
-            <span :class="['order-badge', order.status.toLowerCase()]">
+            <span v-if="order.status !== 'TERMINEE'" :class="['order-badge', order.status.toLowerCase()]">
               {{ order.status === 'COMMANDEE' ? 'Nouvelle' : 'En préparation' }}
             </span>
           </div>
 
-          <!-- Mini-timer basé sur createdAt -->
-          <div :class="['card-timer', orderTimerClass(order)]">
-            <span class="timer-icon">⏱</span>
-            <span class="timer-val">{{ orderTimer(order) }}</span>
-            <span class="timer-lbl">{{ orderTimerDone(order) ? '— temps écoulé' : 'restant' }}</span>
-          </div>
+          <!-- Liste des cocktails (À traiter et Terminées) -->
+          <ul v-if="order.status !== 'EN_COURS'" class="cocktail-list">
+            <li v-for="item in order.items" :key="item.id">
+              {{ item.cocktailName }} <span class="item-qty">× {{ item.quantity }}</span>
+            </li>
+          </ul>
 
           <div class="card-actions">
             <RouterLink
@@ -70,7 +76,7 @@
               class="action-btn primary"
             >Commencer la préparation</RouterLink>
             <RouterLink
-              v-else
+              v-else-if="order.status === 'EN_COURS'"
               :to="`/barmaker/orders/${order.id}`"
               class="action-btn outline"
             >Ouvrir la commande</RouterLink>
@@ -98,28 +104,6 @@ const authStore  = useAuthStore()
 
 const loading   = ref(false)
 const activeTab = ref<'toProcess' | 'inProgress' | 'done'>('toProcess')
-const now       = ref(Date.now())
-
-// Tick toutes les secondes pour mettre à jour les timers des cartes
-let ticker: ReturnType<typeof setInterval> | null = null
-
-function orderElapsed(order: any): number {
-  return Math.floor((now.value - new Date(order.createdAt).getTime()) / 1000)
-}
-function orderTimerDone(order: any): boolean {
-  return orderElapsed(order) >= 300
-}
-function orderTimer(order: any): string {
-  const remaining = Math.max(0, 300 - orderElapsed(order))
-  const m = Math.floor(remaining / 60)
-  const s = remaining % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
-function orderTimerClass(order: any): string {
-  if (orderTimerDone(order)) return 'urgent'
-  if (orderElapsed(order) >= 200) return 'warning'
-  return ''
-}
 
 const toProcess  = computed(() => orderStore.orders.filter(o => o.status === 'COMMANDEE'))
 const inProgress = computed(() => orderStore.orders.filter(o => o.status === 'EN_COURS'))
@@ -147,12 +131,10 @@ let pollTimer: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
   loadOrders()
-  ticker    = setInterval(() => { now.value = Date.now() }, 1000)
   pollTimer = setInterval(() => loadOrders(false), 5000)
 })
 
 onUnmounted(() => {
-  if (ticker)    clearInterval(ticker)
   if (pollTimer) clearInterval(pollTimer)
 })
 </script>
@@ -248,10 +230,18 @@ onUnmounted(() => {
 }
 
 .order-card {
+  position: relative;
   background: white; border: 1px solid var(--c-border);
   border-radius: 12px; padding: 1.25rem;
   display: flex; flex-direction: column; gap: 1rem;
 }
+.dismiss-btn {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 0.85rem; color: #ccc; line-height: 1;
+  padding: 0.2rem 0.4rem;
+}
+.dismiss-btn:hover { color: #999; }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
 .card-id { font-size: 1rem; font-weight: 700; margin: 0 0 0.2rem; }
 .card-meta { font-family: sans-serif; font-size: 0.78rem; color: var(--c-muted); margin: 0; }
@@ -263,17 +253,17 @@ onUnmounted(() => {
 .order-badge.commandee { background: #f5f0e8; color: var(--c-muted); border: 1px solid var(--c-border); }
 .order-badge.en_cours  { background: #fdf4f4; color: var(--c-accent); border: 1px solid var(--c-accent); }
 
-/* Mini-timer */
-.card-timer {
-  display: flex; align-items: center; gap: 0.4rem;
-  font-family: sans-serif; font-size: 0.78rem; color: var(--c-muted);
-  background: var(--c-bg); border-radius: 6px; padding: 0.35rem 0.65rem;
+
+.cocktail-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0.3rem;
 }
-.card-timer.warning { color: #a06b10; background: #fdf4e8; }
-.card-timer.urgent  { color: var(--c-accent); background: #fdf4f4; font-weight: 600; }
-.timer-icon { font-size: 0.85rem; }
-.timer-val  { font-weight: 700; }
-.timer-lbl  { color: inherit; opacity: 0.8; }
+.cocktail-list li {
+  font-family: sans-serif; font-size: 0.82rem; color: var(--c-text);
+  padding: 0.25rem 0; border-bottom: 1px solid var(--c-border);
+}
+.cocktail-list li:last-child { border-bottom: none; }
+.item-qty { color: var(--c-muted); font-size: 0.75rem; }
 
 .card-actions { display: flex; }
 .action-btn {

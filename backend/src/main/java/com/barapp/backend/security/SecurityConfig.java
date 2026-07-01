@@ -31,6 +31,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Les routes publiques accessibles sans token
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/upload").permitAll()
                 .requestMatchers("/api/cocktails/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
                 // Les clients commandent et suivent leurs commandes sans compte
@@ -40,6 +42,8 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/**").permitAll()
                 // Avancement des items par le barmaker — ID connu uniquement côté barmaker
                 .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/orders/items/**").permitAll()
+                // Suppression d'une commande terminée (client ou barmaker)
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/orders/**").permitAll()
                 // Seul le barmaker connecté peut accéder aux autres routes
                 .anyRequest().authenticated()
             )

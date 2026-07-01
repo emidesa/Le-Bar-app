@@ -99,6 +99,16 @@ public class OrderService {
         return toItemResponse(item);
     }
 
+    // Suppression d'une commande terminée (côté client ou barmaker)
+    public void deleteOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Commande non trouvée"));
+        if (order.getStatus() != OrderStatus.TERMINEE) {
+            throw new IllegalStateException("Seules les commandes terminées peuvent être supprimées");
+        }
+        orderRepository.delete(order);
+    }
+
     // Conversion de l'entité Order en DTO pour la réponse API
     private OrderResponse toResponse(Order o) {
         List<OrderItemResponse> items = o.getItems().stream().map(this::toItemResponse).toList();

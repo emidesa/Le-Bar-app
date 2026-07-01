@@ -1,7 +1,7 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <h1>Bar'app</h1>
+      <h1>Tsuki</h1>
       <h2>Créer un compte Barmaker</h2>
 
       <form @submit.prevent="handleRegister">

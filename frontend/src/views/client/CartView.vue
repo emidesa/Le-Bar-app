@@ -6,7 +6,7 @@
       <div class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Bar'app</p>
+          <p class="brand-name">Tsuki</p>
           <p class="brand-tag">BAR À COCKTAILS</p>
         </div>
       </div>
