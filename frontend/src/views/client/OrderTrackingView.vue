@@ -67,14 +67,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
 
-const route      = useRoute()
-const orderStore = useOrderStore()
+const route       = useRoute()
+const orderStore  = useOrderStore()
 const tableNumber = Number(route.query.table) || 1
-const loading    = ref(false)
+const loading     = ref(false)
+let   pollTimer: ReturnType<typeof setInterval> | null = null
 
 const orderSteps = [
   { key: 'COMMANDEE', label: 'Commandée' },
@@ -124,7 +125,15 @@ async function loadOrders() {
   await orderStore.fetchOrdersByTable(tableNumber)
   loading.value = false
 }
-onMounted(loadOrders)
+
+onMounted(() => {
+  loadOrders()
+  pollTimer = setInterval(() => orderStore.fetchOrdersByTable(tableNumber), 5000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
+})
 </script>
 
 <style scoped>

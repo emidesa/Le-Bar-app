@@ -21,7 +21,7 @@
       <p class="service-eyebrow">SERVICE DU SOIR · BAR CENTRAL</p>
       <div class="dashboard-head">
         <h1>Commandes en attente</h1>
-        <button class="refresh-icon" @click="loadOrders" title="Actualiser">↻</button>
+        <button class="refresh-icon" @click="() => loadOrders()" title="Actualiser">↻</button>
       </div>
 
       <!-- Onglets -->
@@ -131,8 +131,8 @@ const currentOrders = computed(() => {
   return done.value
 })
 
-async function loadOrders() {
-  loading.value = true
+async function loadOrders(showLoading = true) {
+  if (showLoading) loading.value = true
   await orderStore.fetchPendingOrders()
   loading.value = false
 }
@@ -143,13 +143,17 @@ function handleLogout() {
   router.push('/barmaker/login')
 }
 
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
 onMounted(() => {
   loadOrders()
-  ticker = setInterval(() => { now.value = Date.now() }, 1000)
+  ticker    = setInterval(() => { now.value = Date.now() }, 1000)
+  pollTimer = setInterval(() => loadOrders(false), 5000)
 })
 
 onUnmounted(() => {
-  if (ticker) clearInterval(ticker)
+  if (ticker)    clearInterval(ticker)
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>
 

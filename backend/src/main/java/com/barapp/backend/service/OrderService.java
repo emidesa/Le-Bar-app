@@ -80,7 +80,7 @@ public class OrderService {
             case TERMINEE -> ItemStatus.TERMINEE;
         };
         item.setStatus(next);
-        orderItemRepository.save(item);
+        orderItemRepository.saveAndFlush(item); // flush immédiat pour que la requête suivante voie le nouveau statut
 
         // Dès que le barmaker touche un item, la commande passe EN_COURS
         Order order = item.getOrder();
@@ -90,10 +90,10 @@ public class OrderService {
         }
 
         // Je vérifie si tous les items de la commande sont terminés pour clore la commande
-        boolean allDone = !orderItemRepository.existsByOrderIdAndStatusNot(order.getId(), ItemStatus.TERMINEE);
-        if (allDone) {
+        long remaining = orderItemRepository.countByOrderIdAndStatusNot(order.getId(), ItemStatus.TERMINEE);
+        if (remaining == 0) {
             order.setStatus(OrderStatus.TERMINEE);
-            orderRepository.save(order);
+            orderRepository.saveAndFlush(order);
         }
 
         return toItemResponse(item);

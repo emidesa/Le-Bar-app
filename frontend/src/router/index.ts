@@ -62,7 +62,7 @@ const router = createRouter({
   ]
 })
 
-// Guard : si la route nécessite d'être connecté et que le barmaker ne l'est pas → login
+// Guard : le store est persisté via pinia-plugin-persistedstate → token disponible dès le rechargement
 router.beforeEach((to) => {
   const auth = useAuthStore()
   if (to.meta.requiresAuth && !auth.isLoggedIn) {

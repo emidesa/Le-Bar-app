@@ -77,7 +77,6 @@
           </div>
 
           <p v-if="error" class="error-msg">{{ error }}</p>
-          <p v-if="success" class="success-msg">Commande envoyée !</p>
 
           <button class="order-btn" :disabled="loading" @click="placeOrder">
             {{ loading ? 'Envoi...' : 'Lancer la commande' }}
@@ -105,15 +104,13 @@ const orderStore = useOrderStore()
 const tableNumber = Number(route.query.table) || 1
 const loading = ref(false)
 const error   = ref('')
-const success = ref(false)
 
 async function placeOrder() {
   loading.value = true
   error.value   = ''
   try {
     await orderStore.placeOrder(tableNumber)
-    success.value = true
-    setTimeout(() => router.push(`/orders?table=${tableNumber}`), 1500)
+    router.push(`/orders?table=${tableNumber}`)
   } catch {
     error.value = 'Erreur lors de la commande, réessaie.'
   } finally {

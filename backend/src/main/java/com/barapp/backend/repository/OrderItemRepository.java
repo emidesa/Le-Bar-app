@@ -10,4 +10,5 @@ import com.barapp.backend.enums.ItemStatus;
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByOrderId(Long orderId);
     boolean existsByOrderIdAndStatusNot(Long orderId, ItemStatus status);
+    long countByOrderIdAndStatusNot(Long orderId, ItemStatus status);
 }

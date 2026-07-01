@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -209,11 +209,11 @@ function statusLabel(s: string) {
 }
 function itemLabel(s: string) {
   return {
-    ATTENTE: '⏸ Attente',
-    PREPARATION_INGREDIENTS: '🧪 Préparation',
-    ASSEMBLAGE: '🔀 Assemblage',
-    DRESSAGE: '🎨 Dressage',
-    TERMINEE: '✅ Prêt',
+    ATTENTE: 'Attente',
+    PREPARATION_INGREDIENTS: 'Préparation',
+    ASSEMBLAGE: 'Assemblage',
+    DRESSAGE: 'Dressage',
+    TERMINEE: 'Prêt',
   }[s] ?? s
 }
 
@@ -255,6 +255,17 @@ async function autoAdvance(fromStatus: string) {
   if (targets.length > 0) await load(false)
 }
 
+// ── Redirection automatique quand la commande est terminée ────────────────
+watch(
+  () => order.value?.status,
+  (status) => {
+    if (status === 'TERMINEE') {
+      if (iv) { clearInterval(iv); iv = null }
+      router.push('/barmaker/orders')
+    }
+  }
+)
+
 // ── Actions manuelles ─────────────────────────────────
 const canFinish = computed(() =>
   !!order.value && order.value.items?.some((i: any) => i.status !== 'TERMINEE')
@@ -264,11 +275,10 @@ async function finishItem(item: any) {
   finishingItem.value = item.id
   error.value = ''
   try {
-    let status = item.status
-    while (status !== 'TERMINEE') {
-      await orderStore.advanceItem(item.id)
-      const idx = statusSeq.indexOf(status)
-      status = statusSeq[Math.min(idx + 1, statusSeq.length - 1)]
+    // On avance l'item jusqu'à TERMINEE en se basant sur la réponse du serveur
+    let result = await orderStore.advanceItem(item.id)
+    while (result?.status !== 'TERMINEE') {
+      result = await orderStore.advanceItem(item.id)
     }
     await load(false)
   } catch (e: any) {
@@ -294,6 +304,7 @@ async function validateFinished() {
     validated.value = true
     if (iv) { clearInterval(iv); iv = null }
     await load(false)
+    // La redirection est gérée par le watcher sur order.value.status
   } catch (e: any) {
     error.value = `Erreur lors de la finalisation (${e?.response?.status ?? 'réseau'})`
   } finally {
