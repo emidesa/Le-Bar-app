@@ -3,13 +3,13 @@
 
     <!-- Navigation -->
     <header class="nav">
-      <div class="nav-brand">
+      <RouterLink :to="`/menu?table=${tableNumber}`" class="nav-brand">
         <div class="brand-logo">🍸</div>
         <div class="brand-text">
-          <p class="brand-name">Tsuki</p>
+          <p class="brand-name">Bar'app</p>
           <p class="brand-tag">BAR À COCKTAILS</p>
         </div>
-      </div>
+      </RouterLink>
 
       <nav class="nav-links">
         <span class="nav-link active">La carte</span>
@@ -173,7 +173,7 @@ function minPrice(sizes: any[]): string {
   border-bottom: 1px solid var(--c-border);
   position: sticky; top: 0; z-index: 20;
 }
-.nav-brand { display: flex; align-items: center; gap: 0.6rem; }
+.nav-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: inherit; }
 .brand-logo {
   width: 34px; height: 34px; border-radius: 8px;
   background: var(--c-accent); color: white;
@@ -331,4 +331,14 @@ function minPrice(sizes: any[]): string {
   transition: opacity 0.12s;
 }
 .btn-add:hover { opacity: 0.85; }
+
+@media (max-width: 768px) {
+  .nav { padding: 0.75rem 1rem; }
+  .nav-links { display: none; }
+  .hero { padding: 1.5rem 1rem 0.5rem; }
+  .hero-title { font-size: 1.7rem; }
+  .controls { padding: 1rem 1rem 0.75rem; }
+  .search-wrap { width: 100%; }
+  .menu-body { padding: 1.25rem 1rem 3rem; }
+}
 </style>

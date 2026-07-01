@@ -2,13 +2,13 @@
   <div class="prep-page">
 
     <header class="bm-nav">
-      <div class="nav-brand">
+      <RouterLink to="/barmaker/orders" class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Tsuki</p>
+          <p class="brand-name">Bar'app</p>
           <span class="bm-badge">ESPACE BARMAKER</span>
         </div>
-      </div>
+      </RouterLink>
       <nav class="nav-links">
         <RouterLink to="/barmaker/orders" class="nav-link active">Commandes</RouterLink>
         <RouterLink to="/barmaker/cocktails" class="nav-link">La carte</RouterLink>
@@ -225,7 +225,7 @@ onMounted(() => load())
   padding: 0.75rem 2rem; background: var(--c-nav);
   border-bottom: 1px solid var(--c-border); position: sticky; top: 0; z-index: 20;
 }
-.nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+.nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
 .brand-icon { font-size: 1.6rem; }
 .brand-name { font-size: 1.1rem; font-weight: bold; color: var(--c-text); margin: 0; line-height: 1.4; }
 .bm-badge {
@@ -333,5 +333,16 @@ onMounted(() => load())
 .finish-all-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .finish-hint {
   font-family: sans-serif; font-size: 0.75rem; color: var(--c-muted); margin: 0.5rem 0 0;
+}
+
+@media (max-width: 768px) {
+  .bm-nav { padding: 0.75rem 1rem; }
+  .nav-links { display: none; }
+  .prep-main { padding: 1.25rem 1rem; }
+  .item-row { flex-wrap: wrap; gap: 0.75rem; }
+  .item-left { min-width: unset; width: 100%; }
+  .stepper { width: 100%; }
+  .item-right { width: 100%; justify-content: flex-end; }
+  .prep-head h1 { font-size: 1.3rem; }
 }
 </style>

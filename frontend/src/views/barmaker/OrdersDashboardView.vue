@@ -3,13 +3,13 @@
 
     <!-- Navigation barmaker -->
     <header class="bm-nav">
-      <div class="nav-brand">
+      <RouterLink to="/barmaker/orders" class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Tsuki</p>
+          <p class="brand-name">Bar'app</p>
           <span class="bm-badge">ESPACE BARMAKER</span>
         </div>
-      </div>
+      </RouterLink>
       <nav class="nav-links">
         <span class="nav-link active">Commandes</span>
         <RouterLink to="/barmaker/cocktails" class="nav-link">La carte</RouterLink>
@@ -161,7 +161,7 @@ onUnmounted(() => {
   padding: 0.75rem 2rem; background: var(--c-nav);
   border-bottom: 1px solid var(--c-border); position: sticky; top: 0; z-index: 20;
 }
-.nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+.nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
 .brand-icon { font-size: 1.6rem; }
 .brand-name { font-size: 1.1rem; font-weight: bold; color: var(--c-text); margin: 0; line-height: 1.4; }
 .bm-badge {
@@ -274,4 +274,11 @@ onUnmounted(() => {
 .action-btn.primary { background: var(--c-accent); color: white; border: none; }
 .action-btn.outline { background: white; color: var(--c-text); border: 1px solid var(--c-border); }
 .action-btn:hover { opacity: 0.85; }
+
+@media (max-width: 768px) {
+  .bm-nav { padding: 0.75rem 1rem; }
+  .nav-links { display: none; }
+  .dashboard-main { padding: 1.25rem 1rem; }
+  .dashboard-head h1 { font-size: 1.4rem; }
+}
 </style>

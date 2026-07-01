@@ -3,13 +3,13 @@
 
     <!-- Navigation -->
     <header class="nav">
-      <div class="nav-brand">
+      <RouterLink :to="`/menu?table=${tableNumber}`" class="nav-brand">
         <div class="brand-icon">🍸</div>
         <div>
-          <p class="brand-name">Tsuki</p>
+          <p class="brand-name">Bar'app</p>
           <p class="brand-tag">BAR À COCKTAILS</p>
         </div>
-      </div>
+      </RouterLink>
       <nav class="nav-links">
         <RouterLink :to="`/menu?table=${tableNumber}`" class="nav-link">La carte</RouterLink>
         <RouterLink :to="`/orders?table=${tableNumber}`" class="nav-link">Mes commandes</RouterLink>
@@ -144,7 +144,7 @@ function addToCart() {
   padding: 0.75rem 2rem; background: var(--c-nav);
   border-bottom: 1px solid var(--c-border); position: sticky; top: 0; z-index: 20;
 }
-.nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+.nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
 .brand-icon { font-size: 1.6rem; }
 .brand-name { font-size: 1.1rem; font-weight: bold; color: var(--c-text); margin: 0; line-height: 1.2; }
 .brand-tag  { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--c-muted); margin: 0; font-family: sans-serif; }
@@ -255,4 +255,15 @@ function addToCart() {
 }
 .cta-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .cta-btn:hover:not(:disabled) { opacity: 0.9; }
+
+@media (max-width: 768px) {
+  .nav { padding: 0.75rem 1rem; }
+  .nav-links { display: none; }
+  .detail-main { grid-template-columns: 1fr; min-height: unset; }
+  .detail-img-wrap { height: 260px; }
+  .detail-img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-img-placeholder { height: 260px; }
+  .detail-info { padding: 1.5rem 1.25rem; }
+  .cocktail-title { font-size: 1.6rem; }
+}
 </style>
