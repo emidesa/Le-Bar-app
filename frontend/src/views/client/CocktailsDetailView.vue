@@ -36,7 +36,6 @@
       <div class="detail-info">
         <p class="cat-eyebrow">{{ cocktail.category?.name?.toUpperCase() }}</p>
         <h1 class="cocktail-title">{{ cocktail.name }}</h1>
-        <p class="cocktail-desc">{{ cocktail.description }}</p>
 
         <!-- Ingrédients -->
         <div class="ings-row" v-if="cocktail.ingredients?.length">
@@ -202,10 +201,6 @@ function addToCart() {
 .cocktail-title {
   font-size: 2.2rem; font-weight: 700; color: var(--c-text);
   margin: 0 0 1rem; line-height: 1.15;
-}
-.cocktail-desc {
-  font-family: sans-serif; font-size: 0.9rem; color: var(--c-muted);
-  line-height: 1.6; margin: 0 0 1.5rem;
 }
 
 /* Ingrédients */
