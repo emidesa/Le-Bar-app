@@ -12,6 +12,7 @@ public class DrinkDto {
     private String strCategory;
     private String strAlcoholic;
     private String strInstructions;
+    private String strInstructionsFR;
     private String strDrinkThumb;
 
     // L'API retourne jusqu'à 15 ingrédients et mesures sous forme de champs séparés

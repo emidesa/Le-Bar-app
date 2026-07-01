@@ -58,21 +58,35 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Initialisation terminée : {} cocktails chargés.", cocktailRepository.count());
     }
 
+    private static final java.util.Map<String, String> CATEGORY_FR = java.util.Map.ofEntries(
+        java.util.Map.entry("Ordinary Drink",     "Cocktails classiques"),
+        java.util.Map.entry("Cocktail",           "Cocktails"),
+        java.util.Map.entry("Shot",               "Shooters"),
+        java.util.Map.entry("Coffee / Tea",       "Café & Thé"),
+        java.util.Map.entry("Homemade Liqueur",   "Liqueurs maison"),
+        java.util.Map.entry("Punch / Party Drink","Punch & Fêtes"),
+        java.util.Map.entry("Beer",               "Bières"),
+        java.util.Map.entry("Soft Drink",         "Boissons sans alcool"),
+        java.util.Map.entry("Other/Unknown",      "Autres"),
+        java.util.Map.entry("Non alcoholic",      "Sans alcool")
+    );
+
     private void saveDrink(DrinkDto drink) {
         // Si le cocktail existe déjà, on passe au suivant
         if (cocktailRepository.findAll().stream()
                 .anyMatch(c -> c.getName().equalsIgnoreCase(drink.getStrDrink()))) return;
 
-        // Je récupère ou crée la catégorie selon le champ strAlcoholic de l'API
-        String categoryName = "Non alcoholic".equals(drink.getStrAlcoholic())
-                ? "Sans alcool" : drink.getStrCategory();
+        // Traduction de la catégorie en français
+        String rawCategory = "Non alcoholic".equals(drink.getStrAlcoholic())
+                ? "Non alcoholic" : drink.getStrCategory();
+        String categoryName = CATEGORY_FR.getOrDefault(rawCategory, rawCategory);
         Category category = categoryRepository.findByName(categoryName)
                 .orElseGet(() -> categoryRepository.save(
                     Category.builder().name(categoryName).description("").build()));
 
         Cocktail cocktail = Cocktail.builder()
                 .name(drink.getStrDrink())
-                .description(drink.getStrInstructions())
+                .description(null)
                 .imageUrl(drink.getStrDrinkThumb())
                 .category(category)
                 .build();
