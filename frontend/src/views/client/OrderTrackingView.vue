@@ -258,11 +258,11 @@ onUnmounted(() => {
   font-family: sans-serif; font-size: 0.65rem; font-weight: 600;
   padding: 0.2rem 0.5rem; border-radius: 10px; white-space: nowrap;
 }
-.item-badge.attente                 { background: #f5f0e8; color: var(--c-muted); }
-.item-badge.preparation_ingredients { background: #f3e8fd; color: #7b3fa0; }
-.item-badge.assemblage              { background: #e8f0fd; color: #2a5ea8; }
-.item-badge.dressage                { background: #fdf4e8; color: #a06b10; }
-.item-badge.terminee                { background: #f0fdf4; color: #27ae60; }
+.item-badge.attente                 { background: #ede8df; color: var(--c-muted); }
+.item-badge.preparation_ingredients { background: #e0dbd0; color: var(--c-text); }
+.item-badge.assemblage              { background: #ccc8bc; color: var(--c-text); }
+.item-badge.dressage                { background: #f0dbd8; color: var(--c-accent); }
+.item-badge.terminee                { background: #e8f5ec; color: #27ae60; }
 
 /* Footer */
 .order-footer {

@@ -209,12 +209,12 @@ onUnmounted(() => {
   padding: 0.6rem 1.25rem; font-family: sans-serif; font-size: 0.88rem;
   color: var(--c-muted); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
 }
-.tab.active { color: var(--c-text); border-bottom-color: var(--c-text); font-weight: 600; }
+.tab.active { color: var(--c-accent); border-bottom-color: var(--c-accent); font-weight: 600; background: none; }
 .tab-count {
   background: var(--c-card); border-radius: 10px;
   font-size: 0.72rem; padding: 0.1rem 0.45rem;
 }
-.tab.active .tab-count { background: var(--c-text); color: white; }
+.tab.active .tab-count { background: var(--c-accent); color: white; }
 
 .state-msg { text-align: center; padding: 3rem; color: var(--c-muted); font-family: sans-serif; }
 

@@ -201,7 +201,7 @@ function minPrice(sizes: any[]): string {
 }
 .user-avatar {
   width: 34px; height: 34px; border-radius: 10px;
-  background: #2C4A6E; color: white;
+  background: var(--c-accent); color: white;
   font-family: sans-serif; font-size: 0.72rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.02em;
@@ -253,9 +253,9 @@ function minPrice(sizes: any[]): string {
   letter-spacing: 0.01em;
 }
 .pill.active {
-  background: #2C4A6E;
+  background: var(--c-accent);
   color: #fff;
-  border-color: #2C4A6E;
+  border-color: var(--c-accent);
   font-weight: 600;
 }
 .pill:not(.active):hover { background: #f0ece4; }

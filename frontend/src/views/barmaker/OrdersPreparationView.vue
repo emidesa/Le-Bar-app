@@ -306,11 +306,11 @@ onMounted(() => load())
   font-family: sans-serif; font-size: 0.68rem; font-weight: 600;
   padding: 0.2rem 0.55rem; border-radius: 10px; white-space: nowrap;
 }
-.item-badge.attente                 { background: #f5f0e8; color: var(--c-muted); }
-.item-badge.preparation_ingredients { background: #f3e8fd; color: #7b3fa0; }
-.item-badge.assemblage              { background: #e8f0fd; color: #2a5ea8; }
-.item-badge.dressage                { background: #fdf4e8; color: #a06b10; }
-.item-badge.terminee                { background: #f0fdf4; color: var(--c-green); }
+.item-badge.attente                 { background: #ede8df; color: var(--c-muted); }
+.item-badge.preparation_ingredients { background: #e0dbd0; color: var(--c-text); }
+.item-badge.assemblage              { background: #ccc8bc; color: var(--c-text); }
+.item-badge.dressage                { background: #f0dbd8; color: var(--c-accent); }
+.item-badge.terminee                { background: #e8f5ec; color: var(--c-green); }
 
 .next-btn {
   width: 32px; height: 32px; border-radius: 6px;
